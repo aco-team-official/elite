@@ -42,13 +42,29 @@
         0%, 100% { opacity: 1; }
         50% { opacity: 0.3; }
       }
+      /* Ensure three.js canvas is always behind UI */
+      #bg-canvas {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 1;
+        display: block;
+      }
     </style>
   </head>
   <body>
     <button id="join-now" onclick="window.location.href='https://your-wordpress-link.com'">Join Now</button>
     <div id="title">ELITE GYM</div>
+    <canvas id="bg-canvas"></canvas>
     <script src="https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.min.js"></script>
     <script>
+      // Setup renderer on custom canvas
+      const canvas = document.getElementById('bg-canvas');
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      // Three.js scene setup
       const scene = new THREE.Scene();
       scene.background = new THREE.Color(0x000000);
 
@@ -60,13 +76,9 @@
       );
       camera.position.z = 10;
 
-      const renderer = new THREE.WebGLRenderer();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      document.body.appendChild(renderer.domElement);
-
+      // Lighting
       const ambientLight = new THREE.AmbientLight(0xff0000, 0.8);
       scene.add(ambientLight);
-
       const spotLight = new THREE.SpotLight(0xff0000);
       spotLight.position.set(0, 20, 10);
       scene.add(spotLight);
@@ -100,9 +112,9 @@
         gymHall.rotation.y += 0.001;
         renderer.render(scene, camera);
       }
-
       animate();
 
+      // Responsive resize
       window.addEventListener("resize", () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
