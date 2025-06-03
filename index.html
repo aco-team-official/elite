@@ -121,5 +121,45 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
       });
     </script>
+    <script>
+  // Scene setup
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
+
+  // Dumbbell shape: two spheres and a cylinder
+  const material = new THREE.MeshStandardMaterial({ color: 0x888888 });
+  const sphereGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+  const leftSphere = new THREE.Mesh(sphereGeometry, material);
+  leftSphere.position.x = -1;
+
+  const rightSphere = new THREE.Mesh(sphereGeometry, material);
+  rightSphere.position.x = 1;
+
+  const cylinderGeometry = new THREE.CylinderGeometry(0.15, 0.15, 2, 32);
+  const cylinder = new THREE.Mesh(cylinderGeometry, material);
+  cylinder.rotation.z = Math.PI / 2;
+
+  const group = new THREE.Group();
+  group.add(leftSphere, rightSphere, cylinder);
+  scene.add(group);
+
+  // Lighting
+  const light = new THREE.PointLight(0xffffff, 1, 100);
+  light.position.set(10, 10, 10);
+  scene.add(light);
+
+  camera.position.z = 5;
+
+  // Animation loop
+  function animate() {
+    requestAnimationFrame(animate);
+    group.rotation.y += 0.01;
+    renderer.render(scene, camera);
+  }
+  animate();
+</script>
   </body>
 </html>
